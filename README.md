@@ -9,4 +9,4 @@ El proyecto está orientado a intentar extraer información de los datos ofrecid
 y mejorar la experiencia de visualización que ahora mismo se dispone en la plataforma por medio 
 de un mapa interactivo publicable vía web. 
 
-###Para ver mas detalles leer docuemnto Memoria Frontur
+###Para ver mas detalles leer documento: Memoria Frontur
