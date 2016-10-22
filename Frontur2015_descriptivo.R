@@ -537,6 +537,16 @@ library(DT)
   points5 <- left_join(points, Ft_viaje_vac , by = c("id" = "PROVINCIA")) 
   ggmap(map.esp) + geom_polygon(aes(x=long,y=lat, group=group, fill=VACACIONES), data=points5, color='black') +
     scale_fill_distiller(breaks = pretty_breaks(n = 4), palette='Spectral') 
+  
+  #Incluimos canarias
+  map.esp<- get_map(location = as.numeric(esp),
+                    color = "color",
+                    maptype = "roadmap",
+                    scale = 2,
+                    zoom = 4)
+  
+  ggmap(map.esp) + geom_polygon(aes(x=long,y=lat, group=group, fill=VACACIONES), data=points5, color='black') +
+    scale_fill_distiller(breaks = pretty_breaks(n = 4), palette='Spectral') 
 
 
 
