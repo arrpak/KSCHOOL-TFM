@@ -30,7 +30,7 @@ Meses <- c(
 
   #carga los datos
   Ft_res <- read.table('data/Frontur_CM.csv', sep = ',', colClasses = "character", header=T, fileEncoding = "latin1")
- 
+  Ft_res <- Ft_res[!Ft_res$VIAJEROS==0,]
    #Formato datos
   Ft_res$ANO <-as.factor(Ft_res$ANO)
   Ft_res$MES<-as.factor(Ft_res$MES)
