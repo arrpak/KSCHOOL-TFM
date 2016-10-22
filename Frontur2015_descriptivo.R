@@ -45,40 +45,6 @@ library(DT)
   Ft <- Ft[, c(1:2,14:15,3:13)]
 
 
-# Corrección a la muestra donada
-# # Por tanto, la cantidad total de muestra donada a toda una CC_AA tiene que repartirse proporcionalmente
-# # entre todas las provincias de esa CC_AA. 
-# # Para ello tenemos que multiplicar el nº de viajeros 
-# # de cada Provincia por un Factor = ((Muestra donada/Muestra recogida) + 1))
-# 
-# # Creamos una función que genera la lista de factores de cada CC_AA 
-# # que posteriormente tendremos que multiplicar por cada Provincia.
-# 
-# foo <- function(x){
-#   u=0
-#   for (i in 1:18){ 
-#     a<-sum(x[x$CC_AA==i,][x[x$CC_AA==i,]$Provincia==0,]$VIAJEROS) #Suma de viajeros con Provincia=00 (muestra donada)
-#     b<-sum(x[x$CC_AA==i,][x[x$CC_AA==i,]$Provincia!=0,]$VIAJEROS) #Suma de viajeros con Provincia!=00 (muestra recogida)
-#     u[i]=((a/b)+1); #Vector de factores
-#   }
-#   return(u) 
-# }
-# 
-# df_fact <- data.frame(foo(Ft)) #Tabla de factores
-# df_fact<-cbind(1:18,df_fact) # Añadimos una columna que corresponde a los valores de las CC_AA.
-# colnames(df_fact)[colnames(df_fact)=="1:18"] <- "CC_AA"
-# colnames(df_fact)[colnames(df_fact)=="foo.Ft."] <- "Factor"
-# 
-# #habría que hacer un leftjoin
-# Ft_corr<-merge(Ft,df_fact, by = "CC_AA") #Unimos las dos tablas por la CC_AA
-# Ft_corr$VIAJEROS <- as.double(Ft_corr$VIAJEROS)  
-# Ft_corr$VIAJEROS <-Ft_corr$VIAJEROS*Ft_corr$Factor #Multiplicamos el nº de Viajeros por el factor de correción obtenido.
-# Ft_corr$Factor<- NULL #Ya no necesitamos la columna Factor
-
-# Quitamos la limitación de memoria por defecto 
-    # memory.size(max = FALSE)
-    # memory.limit(size = NA)
-
 #---------------------------------------------------------------------------------------------------------------
 # SECTOR HOTELERO 
 #---------------------------------------------------------------------------------------------------------------
@@ -102,11 +68,16 @@ library(DT)
   colnames(Ft_hotel_viaj)[colnames(Ft_hotel_viaj)==6 ] <- "Mas de 15 noches"
   
   ListCCAA <- read.table('data/ListadoCCAA.csv', sep = ';', colClasses = "character", header=T, fileEncoding = "latin1")
+  ListCCAA$CC_AA <- as.numeric(ListCCAA$CC_AA)
+  Ft_hotel_viaj$CC_AA <- as.numeric(Ft_hotel_viaj$CC_AA)
   Ft_hotel_viaj <- merge(ListCCAA, Ft_hotel_viaj,by="CC_AA")
   Ft_hotel_viaj$CC_AA <- NULL
   
   ListProv <- read.table('data/ListadoProvincias.csv', sep = ';', colClasses = "character", header=T, fileEncoding = "latin1")
+  ListProv$PROVINCIA <- as.numeric(ListProv$PROVINCIA)
+  Ft_hotel_viaj$PROVINCIA <-  as.numeric(Ft_hotel_viaj$PROVINCIA)
   Ft_hotel_viaj <- merge(ListProv, Ft_hotel_viaj ,by="PROVINCIA")
+  
   Ft_hotel_viaj$PROVINCIA<- NULL
 
   datatable(Ft_hotel_viaj)
@@ -118,6 +89,8 @@ library(DT)
   Ft_hotel_ranking <- dcast(Ft_hotel_ranking, PAIS ~ PERNOCTACIONES)
   ListPaises <- read.table('data/Pais_de_residencia2.csv', sep = ';', colClasses = "character", header=T, fileEncoding = "latin1")
   ListPaises <- ListPaises[!(ListPaises$PAIS == "999"),]
+  ListPaises$PAIS <- as.numeric(ListPaises$PAIS)
+  Ft_hotel_ranking$PAIS <- as.numeric(Ft_hotel_ranking$PAIS)
   Ft_hotel_ranking <- merge(ListPaises, Ft_hotel_ranking,by="PAIS")
   Ft_hotel_ranking$PAIS <- NULL
   colnames(Ft_hotel_ranking)[colnames(Ft_hotel_ranking)=="Pais_text" ] <- "PAIS"
@@ -152,6 +125,8 @@ library(DT)
   Ft_alo$VIAJEROS <- ceiling(Ft_alo$VIAJEROS) 
   Ft_alo <- ddply(Ft_alo, .(PAIS, ALOJAMIENTOS), summarize, VIAJEROS = sum(VIAJEROS))
   Ft_alo <- dcast(Ft_alo, PAIS ~ ALOJAMIENTOS, value.var = "VIAJEROS")
+  ListPaises$PAIS <- as.numeric(ListPaises$PAIS)
+  Ft_alo$PAIS <- as.numeric(Ft_alo$PAIS)  
   Ft_alo<- merge(ListPaises,Ft_alo,by="PAIS")
   Ft_alo$PAIS <- NULL
   Ft_alo$`99` <- NULL
@@ -266,6 +241,9 @@ library(DT)
   Ft_trans <- dcast(Ft_trans, PAIS ~ TRANSPORTE, fun=sum, value.var = "VIAJEROS")
   ListPaises <- read.table('data/Pais_de_residencia2.csv', sep = ';', colClasses = "character", header=T, fileEncoding = "latin1")
   ListPaises <- ListPaises[!(ListPaises$PAIS == "999"),]
+  
+  ListPaises$PAIS <- as.numeric(ListPaises$PAIS)
+  Ft_trans$PAIS <- as.numeric(Ft_trans$PAIS)  
   Ft_trans <- merge(ListPaises, Ft_trans,by="PAIS")
   Ft_trans $PAIS <- NULL
   colnames(Ft_trans )[colnames(Ft_trans )=="Pais_text" ] <- "PAIS"
@@ -334,8 +312,7 @@ library(DT)
   
   
 #---------------------------------------------------------------------------------------
-# 3.Ver la evolución por mes de alquileres de coche, de vuelos, de trenes... De cara a modelos y predicciones puede ser interesante.
- 
+# 3.Ver la evolución por mes de alquileres de coche, de vuelos, de trenes
    # Ft_trans_evol <- Ft[,c(1,2,11,15)]
   # Ft_trans_evol$MES <-  as.character(Ft_trans_evol$MES)
   # 
