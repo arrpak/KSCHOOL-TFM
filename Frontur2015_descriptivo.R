@@ -310,9 +310,12 @@ library(DT)
   #ya que su contribución total es superior al resto 
   
   
+
   
+# ----- NO ENCUENTRO DATOS RELEVANTES POR LO QUE ESTAS LINEAS SE COMENTAN --------    
 #---------------------------------------------------------------------------------------
 # 3.Ver la evolución por mes de alquileres de coche, de vuelos, de trenes
+
    # Ft_trans_evol <- Ft[,c(1,2,11,15)]
   # Ft_trans_evol$MES <-  as.character(Ft_trans_evol$MES)
   # 
